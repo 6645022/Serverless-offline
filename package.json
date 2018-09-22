@@ -1,0 +1,36 @@
+{
+  "name": "superquery",
+  "version": "1.0.0",
+  "description": "server less offline ",
+  "main": "handler.js",
+  "scripts": {
+    "install:docker": "docker pull lambci/lambda",
+    "install:dynamodb": "./node_modules/.bin/sls dynamodb install",
+    "start:dynamodb": "./node_modules/.bin/sls dynamodb start -p 8000  --migrate true",
+    "start:server": "./node_modules/.bin/sls offline start -r us-east-1 --noTimeout",
+    "test": "mocha ./test --compilers js:babel-core/register",
+    "install:env": "npm run install:docker && npm run install:dynamodb"
+  },
+  "author": "roy",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.3",
+    "babel-plugin-source-map-support": "^2.0.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^3.5.0",
+    "eslint": "^5.6.0",
+    "mocha": "^3.2.0",
+    "serverless": "^1.26.1",
+    "serverless-dynamodb-local": "^0.2.35",
+    "serverless-offline": "^3.25.12",
+    "serverless-webpack": "^5.2.0",
+    "webpack": "^4.2.0",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.4",
+    "serverless-dynamodb-client": "0.0.2"
+  }
+}

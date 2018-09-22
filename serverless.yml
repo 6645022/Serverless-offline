@@ -1,0 +1,54 @@
+service: users
+
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: us-east-2
+  stage: dev
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-webpack
+  - serverless-offline
+
+resources:
+  Resources:
+    UsersDB:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        KeySchema:
+          -
+            AttributeName: userId
+            KeyType: HASH
+          -
+            AttributeName: name
+            KeyType: RANGE
+
+        AttributeDefinitions:
+          -
+            AttributeName: userId
+            AttributeType: S
+          -
+            AttributeName: name
+            AttributeType: S
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: users
+
+functions:
+  getUser:
+    handler: handler.user
+    events:
+      - http:
+          path: user
+          method: get
+
+
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
