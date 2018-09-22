@@ -24,5 +24,5 @@ NPM commands
  ```npm run test``` - Create table and insert mock data to DynamoDB and Unit test
 
 ## REST API
-    available route ```http://localhost:3000/user```
+    http://localhost:3000/user
 
