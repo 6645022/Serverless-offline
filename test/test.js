@@ -1,14 +1,15 @@
 import AWS from 'aws-sdk';
 import env from '../config/env'
 import {User} from "../model/user";
+import {calculateAgeAverage} from '../helper/helper'
 const assert = require("chai").assert,
-      fs = require('fs')
+      fs = require('fs');
 
 AWS.config.update(env.dev);
 
 const db = new AWS.DynamoDB();
-const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'})
-var users = JSON.parse(fs.readFileSync('test/usersData.json', 'utf8'));
+const docClient = new AWS.DynamoDB.DocumentClient()
+const users = JSON.parse(fs.readFileSync('test/usersData.json', 'utf8'));
 
 let ageAverage = ()=>{
     let ages = []
@@ -17,8 +18,7 @@ let ageAverage = ()=>{
             ages.push(i.age)
         }
     })
-    let sum = ages.reduce((a, b) => a + b, 0);
-    return  sum / ages.length;
+    return calculateAgeAverage(ages)
 }
 
 describe('Check table operations',()=>{
@@ -82,10 +82,14 @@ describe('add users',()=>{
 })
 describe("#verify users",function(){
     it ("verify the number of users and correct average", function(done){
-        new User().fetch().then((result)=>{
-            let ages = ageAverage();
-            assert.equal(users.length, result.users.length);
-            assert.equal(ages, result.ageAverage);
+        new User().fetch().then((result,err)=>{
+            if (err) {
+                console.error("Unable to fetch users",err);
+            }else{
+                let ages = ageAverage();
+                assert.equal(users.length, result.users.length);
+                assert.equal(ages, result.ageAverage);
+            }
             done()
         });
 
@@ -93,7 +97,7 @@ describe("#verify users",function(){
     it ("user with no age field", function(done){
         docClient.scan({TableName : 'users'}, function(err, data) {
             if (err) {
-                assert(err).to.exist;
+                console.error("Unable to fetch users",err);
             } else {
                 data.Items.forEach(function(item) {
                     if(!item.age){

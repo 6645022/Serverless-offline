@@ -1,16 +1,11 @@
 import {DynamoDB} from '../module/dynamodb'
+import {calculateAgeAverage} from '../helper/helper'
 const {performance} = require('perf_hooks')
 export class User extends DynamoDB {
     constructor() {
         super();
         this.users = [];
         this.ages  = []
-    }
-
-    calculateAgeAverage(){
-        const ageCount = this.ages.length;
-        const sum = this.ages.reduce((a, b) => a + b, 0);
-        return sum / ageCount
     }
 
     async fetch(user = null){
@@ -44,7 +39,7 @@ export class User extends DynamoDB {
                     await this.fetch(result['LastEvaluatedKey'])
                 }
             }
-            const ageAverage = this.calculateAgeAverage();
+            const ageAverage = calculateAgeAverage(this.ages);
             return {users:this.users,ageAverage:ageAverage};
 
         }catch(err){
