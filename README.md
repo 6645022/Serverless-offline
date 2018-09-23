@@ -1,6 +1,4 @@
-# Project Title
-
-Serverless offline
+# Serverless offline
 
 ## Getting Started
 
